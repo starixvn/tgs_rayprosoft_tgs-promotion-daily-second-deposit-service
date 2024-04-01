@@ -19,7 +19,7 @@ public class DepositRuleReplyProcessor(ILogger<DepositRuleReplyProcessor> logger
                            PromotionUtility.SerializerOptions) ??
                        throw new NullReferenceException("Deserialize DepositRewardSetting is null");
 
-        logger.LogDebug("First deposit setting : {settings}", settings);
+        logger.LogDebug("Daily second deposit setting : {settings}", settings);
 
         settings = settings with
         {
