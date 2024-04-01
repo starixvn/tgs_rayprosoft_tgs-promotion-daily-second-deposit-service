@@ -4,9 +4,9 @@ include:
     file: GitLab/Templates/gitlab-job-templates.yml
 
 variables:
-  ImageName: pgtgs/promotion-second-deposit-service
-  TgsSettingKey: promotion-second-deposit-service
-  HelmTemplateFolderName: promotion-second-deposit-service
+  ImageName: pgtgs/promotion-daily-second-deposit-service
+  TgsSettingKey: promotion-daily-second-deposit-service
+  HelmTemplateFolderName: promotion-daily-second-deposit-service
   BuildCacheKey: Tgs.Promotion.Second.Deposit.$CI_PIPELINE_IID
 
 stages:
@@ -28,7 +28,7 @@ unit-test:
 push-docker-image:
   extends: .push-docker-image-template
   script:
-    - push_docker "Tgs.Promotion.Second.Deposit.Service"
+    - push_docker "Tgs.Promotion.Daily.Second.Deposit.Service"
 
 push-k8s-template:
   extends: .push-k8s-template
