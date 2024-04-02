@@ -93,12 +93,12 @@ builder.Services
     .AddMessageQueue()
     .AddNatsMessageQueue(natsConfiguration => natsConfiguration
         .ConfigureResolveConnection(sp => sp.GetRequiredKeyedService<NatsConnection>("Nats"))
-        .AddProcessor<DepositRuleReplyProcessor>("tgs.promotion.dailyfirstdeposit.setting",
-            "tgs.promotion.dailyfirstdeposit.setting")
+        .AddProcessor<DepositRuleReplyProcessor>("tgs.promotion.dailyseconddeposit.setting",
+            "tgs.promotion.dailyseconddeposit.setting")
         .AddHandler(
             ProcessorTypes.DepositFormStatusChangedHandlerType,
             "tgs.payment.deposit.status_ex",
-            "tgs.promotion.daily-first-deposit.deposit"))
+            "tgs.promotion.daily-second-deposit.deposit"))
     .AddNatsGlobPatternExchange("*");
 
 var app = builder.Build();
