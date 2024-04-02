@@ -39,7 +39,7 @@ public class DistributeFirstDepositBonusCommandServiceTests
             .Returns(new PromotionMainInfo
             {
                 Id = promotionId,
-                PromotionType = "DailyFirstDeposit",
+                PromotionType = "DailySecondDeposit",
                 EventDuring = (DateTime.Now.AddDays(-1D), DateTime.Now.AddDays(1D))
             });
 
@@ -120,7 +120,7 @@ public class DistributeFirstDepositBonusCommandServiceTests
             .Returns(new PromotionMainInfo
             {
                 Id = promotionId,
-                PromotionType = "DailyFirstDeposit",
+                PromotionType = "DailySecondDeposit",
                 EventDuring = (DateTime.Now.AddDays(-1D), DateTime.Now.AddDays(1D))
             });
 
@@ -204,7 +204,7 @@ public class DistributeFirstDepositBonusCommandServiceTests
             .Returns(new PromotionMainInfo
             {
                 Id = promotionId,
-                PromotionType = "DailyFirstDeposit",
+                PromotionType = "DailySecondDeposit",
                 EventDuring = (DateTime.Now.AddDays(-1D), DateTime.Now.AddDays(1D)),
                 PromotionLimitAmount = 10000M
             });
@@ -282,7 +282,7 @@ public class DistributeFirstDepositBonusCommandServiceTests
             .Returns(new PromotionMainInfo
             {
                 Id = promotionId,
-                PromotionType = "DailyFirstDeposit",
+                PromotionType = "DailySecondDeposit",
                 EventDuring = (DateTime.Now.AddDays(-1D), DateTime.Now.AddDays(1D)),
                 PromotionLimitAmount = 10000M
             });

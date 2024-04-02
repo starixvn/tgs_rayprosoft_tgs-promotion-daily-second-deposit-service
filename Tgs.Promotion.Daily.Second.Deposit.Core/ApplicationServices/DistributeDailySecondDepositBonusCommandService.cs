@@ -21,7 +21,7 @@ internal class DistributeDailySecondDepositBonusCommandService(
 			command.DepositForm.PromotionId.Value,
 			cancellationToken).ConfigureAwait(false);
 
-        if (promotionMainInfo?.PromotionType is not "DailyFirstDeposit")
+        if (promotionMainInfo?.PromotionType is not "DailySecondDeposit")
             return;
 
         var rule = await promotionServiceClient.GetPromotionRuleAsync<PromotionRule>(
