@@ -1,15 +1,20 @@
 using FluentdForward.OpenTelemetry.MessagePack;
 using Microsoft.EntityFrameworkCore;
 using NATS.Client.Core;
+using NATS.Client.Serializers.Json;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using StackExchange.Redis;
+using Tgs.Payment.Protos;
+using Tgs.Promotion.Clients.Protos;
+using Tgs.Promotion;
 using Tgs.Promotion.Daily.Second.Deposit.Core;
 using Tgs.Promotion.Daily.Second.Deposit.Core.DependencyInjection;
 using Tgs.Promotion.Daily.Second.Deposit.Core.MessageReply;
 using Tgs.Promotion.Daily.Second.Deposit.Repository.DependencyInjection;
 using Tgs.Promotion.Daily.Second.Deposit.Service.NatsSerializers;
+using TGS.Core.Infrastructures.Nats;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -82,24 +87,18 @@ _ = builder.Services
     .Services
     .AddProfileViewer();
 
-builder.Services
-    .AddKeyedSingleton(
-        "Nats",
-        (sp, _) => new NatsConnection(NatsOpts.Default with
-        {
-            Url = builder.Configuration.GetConnectionString("Nats")!,
-            SerializerRegistry = AccountFirstDepositSerizerRegistration.Default
-        }))
-    .AddMessageQueue()
-    .AddNatsMessageQueue(natsConfiguration => natsConfiguration
-        .ConfigureResolveConnection(sp => sp.GetRequiredKeyedService<NatsConnection>("Nats"))
-        .AddProcessor<DepositRuleReplyProcessor>("tgs.promotion.dailyseconddeposit.setting",
-            "tgs.promotion.dailyseconddeposit.setting")
-        .AddHandler(
-            ProcessorTypes.DepositFormStatusChangedHandlerType,
-            "tgs.payment.deposit.status_ex",
-            "tgs.promotion.daily-second-deposit.deposit"))
-    .AddNatsGlobPatternExchange("*");
+builder.Services.AddNatsMessage(builder.Configuration.GetConnectionString("Nats")!, ProtobufSerializerRegistry.Default)
+    .RequestReplyRegister<CampaignDetailRequest, CampaignDetailResponse>(typeof(DepositRuleReplyProcessor),
+        "tgs.promotion.dailyseconddeposit.setting", "tgs.promotion.dailyseconddeposit.setting")
+    .RequestReplyRegister(typeof(DetailReplyProcessor),
+        string.Format(PromotionDetailConst.DetailSubjectTemplate, "dailyseconddeposit"),
+        string.Format(PromotionDetailConst.DetailSubjectTemplate, "dailyseconddeposit"),
+        NatsJsonSerializerRegistry.Default.GetDeserializer<DistributedDetailRequest>(),
+        NatsJsonSerializerRegistry.Default.GetSerializer<DistributedDetailResponse>())
+    .SubscribeRegister<FormEventEx>(
+        ProcessorTypes.DepositFormStatusChangedHandlerType,
+        "tgs.payment.deposit.status_ex",
+        "tgs.promotion.first-deposit.deposit");
 
 var app = builder.Build();
 {
